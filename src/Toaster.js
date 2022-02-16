@@ -47,9 +47,15 @@ class Toaster extends Component {
     return Object.assign({ id: Math.random().toString(36) }, obj)
   }
 
-  componentWillReceiveProps (nextProps) {
-    if (!nextProps.message) return
-    const message = this.cloneWithId(nextProps.message)
+  // componentWillReceiveProps (nextProps) {
+  //   if (!nextProps.message) return
+  //   const message = this.cloneWithId(nextProps.message)
+  //   this.setState({ messages: this.state.messages.concat(message) })
+  // }
+
+  componentDidUpdate (prevProps) {
+    if (!this.props.message) return
+    const message = this.cloneWithId(this.props.message)
     this.setState({ messages: this.state.messages.concat(message) })
   }
 
