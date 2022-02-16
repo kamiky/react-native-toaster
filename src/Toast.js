@@ -33,7 +33,7 @@ class Toast extends Component {
 
   state = { animatedValue: new Animated.Value(0), timeoutId: null }
 
-  componentWillMount () {
+  componentDidMount () {
     this.showToast()
   }
 
