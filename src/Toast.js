@@ -11,6 +11,8 @@ import ToastStyles from './ToastStyles'
 const noop = () => 0
 
 class Toast extends Component {
+  timeoutId = null;
+  onHideTimeout = null;
   static propTypes = {
     id: PropTypes.string.isRequired,
     text: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
@@ -31,15 +33,15 @@ class Toast extends Component {
     onPress: noop
   }
 
-  state = { animatedValue: new Animated.Value(0), timeoutId: null }
+  state = { animatedValue: new Animated.Value(0) }
 
   componentDidMount () {
     this.showToast()
   }
 
   componentWillUnmount () {
-    const { timeoutId } = this.state;
-    clearTimeout(timeoutId)
+    clearTimeout(this.timeoutId)
+    clearTimeout(this.onHideTimeout)
   }
 
   componentDidUpdate (prevProps) {
@@ -58,21 +60,22 @@ class Toast extends Component {
       .start()
 
     const { duration, onShow } = this.props
-    const timeoutId = setTimeout(() => this.hideToast(), duration + 350)
+    this.timeoutId = setTimeout(() => this.hideToast(), duration + 350)
 
-    this.setState({ timeoutId }, onShow)
+    this.props.onShow && this.props.onShow()
   }
 
   hideToast () {
-    const { timeoutId, animatedValue } = this.state
+    const { animatedValue } = this.state
 
-    clearTimeout(timeoutId)
+    clearTimeout(this.timeoutId)
+    clearTimeout(this.onHideTimeout)
 
     Animated
       .timing(animatedValue, { toValue: 0, duration: 350, useNativeDriver: false })
       .start()
 
-    setTimeout(this.props.onHide, 350)
+    this.onHideTimeout = setTimeout(this.props.onHide, 350)
   }
 
   onPress = () => {
